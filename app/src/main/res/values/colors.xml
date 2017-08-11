@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="transparent_red">#1AF44336</color>
 
     <!-- Material DEFAULT colors -->
     <color name="material_red">#D32F2F</color>

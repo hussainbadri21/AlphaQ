@@ -29,7 +29,14 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.mikepenz.iconics.utils.Utils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,6 +51,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Location mLastLocation;
     Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
+
+    ArrayList<UnsafeLocation> unsafeLocationsList = new ArrayList<>();
+    FirebaseAuth firebaseAuth;
+    DatabaseReference databaseReference;
+
     @BindView(R.id.placeholder)
     com.getbase.floatingactionbutton.FloatingActionButton placeholder;
     @BindView(R.id.users)
@@ -59,10 +71,47 @@ SharedPreferences sharedPreferences;
         }
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 
+
+        databaseReference = FirebaseDatabase.getInstance().getReference();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+//        UnsafeLocation uLocation = new UnsafeLocation("12.817068", "80.037171", "20");
+//
+//        databaseReference.child("unsafe").setValue(uLocation);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                unsafeLocationsList.clear();
+                Iterable<DataSnapshot> unsafeLocations = dataSnapshot.child("unsafe").getChildren();
+                for (DataSnapshot info : unsafeLocations) {
+                    UnsafeLocation unsafeLocation = info.getValue(UnsafeLocation.class);
+                    unsafeLocationsList.add(unsafeLocation);
+                    Log.d("Latitude", unsafeLocation.getLatitude());
+                    LatLng lata = new LatLng(Double.parseDouble(unsafeLocation.getLatitude()), Double.parseDouble(unsafeLocation.getLongitude()));
+
+                    mMap.addCircle(
+                            new CircleOptions().center(
+                                    lata
+                            )
+                                    .radius(Double.parseDouble(unsafeLocation.getRadius()))
+                                    .strokeWidth(0f)
+                                    .fillColor(0x550000FF)
+                    );
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
         placeholder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,29 +151,12 @@ SharedPreferences sharedPreferences;
                 buildGoogleApiClient();
                 mMap.setMyLocationEnabled(true);
             }
-        }
-        else {
+        } else {
             buildGoogleApiClient();
             mMap.setMyLocationEnabled(true);
         }
-        LatLng sydney = new LatLng(12.817068, 80.037171);
-        LatLng sydney2 = new LatLng(-34, 152);
-        mMap.addCircle(
-                new CircleOptions().center(
-                        sydney
-                )
-                        .radius(500)
-                        .strokeWidth(0f)
-                        .fillColor(0x550000FF)
-        );
-        mMap.addCircle(
-                new CircleOptions().center(
-                        sydney2
-                )
-                        .radius(500)
-                        .strokeWidth(0f)
-                        .fillColor(0x550000FF)
-        );
+
+
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -179,15 +211,8 @@ SharedPreferences sharedPreferences;
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
-        mMap.addCircle(
-                new CircleOptions().center(
-                        latLng
-                )
-                        .radius(500)
-                        .strokeWidth(0f)
-                        .fillColor(0x550000FF)
-        );
-        Log.d("My:",latLng.toString());
+
+        Log.d("My:", latLng.toString());
         //stop location updates
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
@@ -196,9 +221,9 @@ SharedPreferences sharedPreferences;
     }
 
 
-
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    public boolean checkLocationPermission(){
+
+    public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
