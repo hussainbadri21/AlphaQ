@@ -71,10 +71,7 @@ public class login extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-     /*   CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                        .setDefaultFontPath("fonts/Lavanderia Delicate.otf")
-                        .setFontAttrId(R.attr.fontPath)
-                        .build());*/
+
 
         setContentView(R.layout.activity_login);
 
@@ -145,6 +142,7 @@ public class login extends AppCompatActivity implements
             editor.putString("email",email);
             editor.putString("img",personPhotoUrl);
             editor.apply();
+
 
             Log.e("info", "Name: " + personName + ", email: " + email
                     + ", Image: " + personPhotoUrl);
