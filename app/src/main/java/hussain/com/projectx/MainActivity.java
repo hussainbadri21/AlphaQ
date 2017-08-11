@@ -33,11 +33,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hamburgerImageView = (ImageView) findViewById(R.id.hamburger_icon);
         hamburgerImageView.setOnClickListener(this);
 
-        PrimaryDrawerItem itemHome = new PrimaryDrawerItem().withIdentifier(1).withName("Home");
-        PrimaryDrawerItem itemSos = new PrimaryDrawerItem().withIdentifier(1).withName("SOS");
-        PrimaryDrawerItem itemProfile = new PrimaryDrawerItem().withIdentifier(1).withName("Profile");
-        PrimaryDrawerItem itemAbout = new PrimaryDrawerItem().withIdentifier(1).withName("About");
-        PrimaryDrawerItem itemLogout = new PrimaryDrawerItem().withIdentifier(1).withName("Log Out");
+        PrimaryDrawerItem itemHome = new PrimaryDrawerItem().withIdentifier(1).withName("Home").withIcon(R.drawable.nav_home_black);
+        PrimaryDrawerItem itemSos = new PrimaryDrawerItem().withIdentifier(1).withName("SOS").withIcon(R.drawable.nav_sos);
+        PrimaryDrawerItem itemProfile = new PrimaryDrawerItem().withIdentifier(1).withName("Profile").withIcon(R.drawable.nav_profile);
+        PrimaryDrawerItem itemAbout = new PrimaryDrawerItem().withIdentifier(1).withName("About").withIcon(R.drawable.nav_about_us_black);
+        PrimaryDrawerItem itemLogout = new PrimaryDrawerItem().withIdentifier(1).withName("Log Out").withIcon(R.drawable.nav_logout);
 
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
