@@ -4,15 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -35,6 +41,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
+import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -44,7 +62,7 @@ import butterknife.ButterKnife;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener, View.OnClickListener {
 
     private GoogleMap mMap;
     GoogleApiClient mGoogleApiClient;
@@ -60,7 +78,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     com.getbase.floatingactionbutton.FloatingActionButton placeholder;
     @BindView(R.id.users)
     com.getbase.floatingactionbutton.FloatingActionButton users;
-SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences;
+    private SupportMapFragment mapFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,13 +89,18 @@ SharedPreferences sharedPreferences;
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
+
+//        getActionBar().setHomeButtonEnabled(true);
+//        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        // Obtain the SupportMapFragment and get notified
+        // when the map is ready to be used.
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map_fragment);
         mapFragment.getMapAsync(this);
 
 //        UnsafeLocation uLocation = new UnsafeLocation("12.817068", "80.037171", "20");
@@ -111,21 +136,21 @@ SharedPreferences sharedPreferences;
         });
 
 
-
         placeholder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(MapsActivity.this,LocationPickerActivity.class);
+                Intent i = new Intent(MapsActivity.this, LocationPickerActivity.class);
                 startActivity(i);
             }
         });
         users.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(MapsActivity.this,SOSFragment.class);
+                Intent i = new Intent(MapsActivity.this, SOSFragment.class);
                 startActivity(i);
             }
         });
+
     }
 
 
@@ -199,8 +224,8 @@ SharedPreferences sharedPreferences;
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("lat",String.valueOf(location.getLatitude()));
-        editor.putString("lon",String.valueOf(location.getLongitude()));
+        editor.putString("lat", String.valueOf(location.getLatitude()));
+        editor.putString("lon", String.valueOf(location.getLongitude()));
         editor.apply();
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
@@ -291,5 +316,9 @@ SharedPreferences sharedPreferences;
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    @Override
+    public void onClick(View v) {
     }
 }
