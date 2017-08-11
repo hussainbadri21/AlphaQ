@@ -1,7 +1,9 @@
 {
   "project_info": {
     "project_number": "481686364853",
-    "project_id": "projectx-f0532"
+    "firebase_url": "https://projectx-f0532.firebaseio.com",
+    "project_id": "projectx-f0532",
+    "storage_bucket": "projectx-f0532.appspot.com"
   },
   "client": [
     {
@@ -12,6 +14,26 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "481686364853-m0ploiljc6ajkhs34b92f9kgda9m57sv.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "481686364853-dvosqh6dagsm5dfntshrbacvg1agkvl4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hussain.com.projectx",
+            "certificate_hash": "40e00a7099f171a5c2509007dd1a8dbf9a251e44"
+          }
+        },
+        {
+          "client_id": "481686364853-i9jtslv9ftsbcvfagk1p21o3edqvl5ai.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hussain.com.projectx",
+            "certificate_hash": "edca61f75fec77469bcd63a917d5a18716ae6548"
+          }
+        },
         {
           "client_id": "481686364853-ppu5p20g5imql37o567ajuvpr2re6msd.apps.googleusercontent.com",
           "client_type": 1,
@@ -35,11 +57,16 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "481686364853-m0ploiljc6ajkhs34b92f9kgda9m57sv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
