@@ -1,9 +1,53 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fab="http://schemas.android.com/apk/res-auto" >
+<fragment
     android:id="@+id/map"
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="hussain.com.projectx.MapsActivity">
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/right_labels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        fab:fab_addButtonColorNormal="@color/md_blue_A100"
+
+        fab:fab_addButtonSize="normal"
+
+        fab:fab_labelsPosition="left">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_icon="@drawable/placeholder"
+            android:id="@+id/placeholder"
+            fab:fab_colorNormal="@color/md_blue_A100"
+            fab:fab_size="mini"
+            fab:fab_title="Label on the right"
+ />
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/users"
+            fab:fab_colorNormal="@color/md_blue_A100"
+            fab:fab_icon="@drawable/users"
+            fab:fab_size="mini"
+            fab:fab_title="Another one on the right"
+         />
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
+
+
+
+
 
 </fragment>
+    </RelativeLayout>

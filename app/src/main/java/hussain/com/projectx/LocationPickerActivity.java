@@ -1,8 +1,12 @@
 package hussain.com.projectx;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-        import android.view.View;
-        import android.webkit.JavascriptInterface;
+import android.util.Log;
+import android.view.View;
+import android.webkit.GeolocationPermissions;
+import android.webkit.JavascriptInterface;
         import android.webkit.WebChromeClient;
         import android.webkit.WebView;
         import android.widget.Button;
@@ -13,6 +17,11 @@ import android.widget.Toast;
         import android.app.Activity;
         import android.app.AlertDialog;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 public class LocationPickerActivity extends Activity {
 
@@ -20,23 +29,32 @@ public class LocationPickerActivity extends Activity {
     private EditText searchText;
     private Button searchButton;
 
-    private Float latitude = 0f;
-    private Float longitude = 0f;
+    private float latitude = 0f;
+    private float longitude = 0f;
+    Double lat;
+    Double lon;
     private Integer zoom = 5;
     private Integer radius=10;
     private String locationName;
-    TextView rad=(TextView) findViewById(R.id.rad);
+    @BindView(R.id.rad)
+    TextView rad;
+    SharedPreferences sharedPreferences;
     @Override
     @SuppressLint("SetJavaScriptEnabled")
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_picker);
-
+        ButterKnife.bind(this);
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        lon =Double.parseDouble(sharedPreferences.getString("lon",""));
+        lat = Double.parseDouble(sharedPreferences.getString("lat",""));
+        Log.e("data",String.valueOf(lat)+"  "+String.valueOf(lon));
         if (savedInstanceState!=null) {
-            latitude = savedInstanceState.getFloat("latitude");
-            longitude = savedInstanceState.getFloat("longitude");
+
             zoom = savedInstanceState.getInt("zoom");
             locationName = savedInstanceState.getString("locationName");
+
+
         }
 
         // LOCATION PICKER WEBVIEW SETUP
@@ -47,15 +65,22 @@ public class LocationPickerActivity extends Activity {
         locationPickerView.addJavascriptInterface(new LocationPickerJSInterface(), "AndroidFunction");
         rad.setText(radius.toString());
         locationPickerView.loadUrl("file:///android_asset/locationPickerPage/index.html");
+        locationPickerView.setWebChromeClient(new WebChromeClient(){
 
-        locationPickerView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+                callback.invoke(origin, true, false);
+            }
+        });
+        /*locationPickerView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int progress) {
                 if (progress == 100) {
-                    locationPickerView.loadUrl("javascript:activityInitialize(" + latitude + "," + longitude + "," + zoom + ")");
+
+                    locationPickerView.loadUrl("javascript:activityInitialize(" + lat+ "," +lon + "," + zoom + ")");
                 }
             }
-        });
+        });*/
         // ^^^
 
         // EVENT HANDLER FOR PERFORMING SEARCH IN WEBVIEW

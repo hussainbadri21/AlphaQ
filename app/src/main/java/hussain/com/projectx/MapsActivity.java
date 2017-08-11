@@ -1,5 +1,8 @@
 package hussain.com.projectx;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
@@ -9,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -27,6 +31,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.mikepenz.iconics.utils.Utils;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -37,19 +44,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Location mLastLocation;
     Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
-
+    @BindView(R.id.placeholder)
+    com.getbase.floatingactionbutton.FloatingActionButton placeholder;
+    @BindView(R.id.users)
+    com.getbase.floatingactionbutton.FloatingActionButton users;
+SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
+        ButterKnife.bind(this);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        placeholder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(MapsActivity.this,LocationPickerActivity.class);
+                startActivity(i);
+            }
+        });
+        users.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(MapsActivity.this,SOSFragment.class);
+                startActivity(i);
+            }
+        });
     }
 
 
@@ -139,6 +166,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("lat",String.valueOf(location.getLatitude()));
+        editor.putString("lon",String.valueOf(location.getLongitude()));
+        editor.apply();
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");

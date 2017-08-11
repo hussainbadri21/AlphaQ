@@ -44,6 +44,7 @@ dependencies {
     compile 'com.skyfishjy.ripplebackground:library:1.0.1'
     compile 'com.hbb20:ccp:2.0.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.jakewharton:butterknife:8.6.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.google.android.gms:play-services-location:11.0.1'
