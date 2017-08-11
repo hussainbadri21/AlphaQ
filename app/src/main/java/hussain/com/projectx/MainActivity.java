@@ -1,6 +1,12 @@
 package hussain.com.projectx;
 
 import android.content.ClipData;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +14,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -17,17 +24,30 @@ import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
+import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import java.net.URL;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, Drawer.OnDrawerItemClickListener {
 
     FrameLayout mainActivityFrameLayout;
     private Drawer result;
     ImageView hamburgerImageView;
+SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+
 
         mainActivityFrameLayout = (FrameLayout) findViewById(R.id.main_framelayout);
         hamburgerImageView = (ImageView) findViewById(R.id.hamburger_icon);
@@ -38,14 +58,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         PrimaryDrawerItem itemProfile = new PrimaryDrawerItem().withIdentifier(1).withName("Profile").withIcon(R.drawable.nav_profile);
         PrimaryDrawerItem itemAbout = new PrimaryDrawerItem().withIdentifier(1).withName("About").withIcon(R.drawable.nav_about_us_black);
         PrimaryDrawerItem itemLogout = new PrimaryDrawerItem().withIdentifier(1).withName("Log Out").withIcon(R.drawable.nav_logout);
-
+      //  Picasso.with(getApplicationContext()).load(sharedPreferences.getString("img","")).into(dp);
+       // BitmapDrawable bp=(BitmapDrawable)dp.getDrawable();
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.navbar_background)
                 .addProfiles(
-                        new ProfileDrawerItem().withName("Narayana Suri")
-                                .withEmail("narayanasuri@chelsea.co.uk").withIcon(getResources().getDrawable(R.drawable.profile_img))
-                )
+                        new ProfileDrawerItem().withName(sharedPreferences.getString("name",""))
+                                .withEmail(sharedPreferences.getString("email","")).withIcon(R.drawable.profile_img))
                 .withOnAccountHeaderProfileImageListener(new AccountHeader.OnAccountHeaderProfileImageListener() {
                     @Override
                     public boolean onProfileImageClick(View view, IProfile profile, boolean current) {
@@ -72,6 +92,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 )
                 .withOnDrawerItemClickListener(this)
                 .build();
+
+
+
         result.closeDrawer();
         result.setSelection(1);
 
