@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "481686364853",
+    "project_id": "projectx-f0532"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:481686364853:android:f32cdfd92914d281",
+        "android_client_info": {
+          "package_name": "hussain.com.projectx"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "481686364853-ppu5p20g5imql37o567ajuvpr2re6msd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "hussain.com.projectx",
+            "certificate_hash": "cbda7f45309a007c34da6440fbec5ca70b10ed24"
+          }
+        },
+        {
+          "client_id": "481686364853-ll6esd548lof2ej7j3t44tq70odfh98a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgLeNkIXSExFi7GJV8L31VJw9gtbHYyNY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

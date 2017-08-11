@@ -140,6 +140,11 @@ public class login extends AppCompatActivity implements
             String personName = acct.getDisplayName();
             String personPhotoUrl = acct.getPhotoUrl().toString();
             String email = acct.getEmail();
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.putString("name",personName);
+            editor.putString("email",email);
+            editor.putString("img",personPhotoUrl);
+            editor.apply();
 
             Log.e("info", "Name: " + personName + ", email: " + email
                     + ", Image: " + personPhotoUrl);
