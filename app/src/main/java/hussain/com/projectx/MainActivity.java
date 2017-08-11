@@ -60,12 +60,27 @@ SharedPreferences sharedPreferences;
         PrimaryDrawerItem itemLogout = new PrimaryDrawerItem().withIdentifier(1).withName("Log Out").withIcon(R.drawable.nav_logout);
       //  Picasso.with(getApplicationContext()).load(sharedPreferences.getString("img","")).into(dp);
        // BitmapDrawable bp=(BitmapDrawable)dp.getDrawable();
-        AccountHeader headerResult = new AccountHeaderBuilder()
+        DrawerImageLoader.init(new AbstractDrawerImageLoader() {
+            @Override
+            public void set(ImageView imageView, Uri uri, Drawable placeholder) {
+                Picasso.with(imageView.getContext()).load(uri).placeholder(placeholder).into(imageView);
+            }
+
+            @Override
+            public void cancel(ImageView imageView) {
+                Picasso.with(imageView.getContext()).cancelRequest(imageView);
+            }
+
+            @Override
+            public Drawable placeholder(Context ctx) {
+                return null;
+            }
+        });        AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.navbar_background)
                 .addProfiles(
                         new ProfileDrawerItem().withName(sharedPreferences.getString("name",""))
-                                .withEmail(sharedPreferences.getString("email","")).withIcon(R.drawable.profile_img))
+                                .withEmail(sharedPreferences.getString("email","")).withIcon(Uri.parse(sharedPreferences.getString("img",""))))
                 .withOnAccountHeaderProfileImageListener(new AccountHeader.OnAccountHeaderProfileImageListener() {
                     @Override
                     public boolean onProfileImageClick(View view, IProfile profile, boolean current) {

@@ -145,7 +145,7 @@ public class login extends AppCompatActivity implements
 
 
             Log.e("info", "Name: " + personName + ", email: " + email
-                    + ", Image: " + personPhotoUrl);
+                    + ", Image: " + personPhotoUrl+" ");
 
 
 
@@ -231,6 +231,7 @@ public class login extends AppCompatActivity implements
            //Intent here
             Intent i=new Intent(login.this,MainActivity.class);
             startActivity(i);
+            finish();
         } else {
 
         }
