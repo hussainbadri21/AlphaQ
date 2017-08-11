@@ -28,8 +28,6 @@ dependencies {
         transitive = true
     }
     compile 'com.github.markushi:circlebutton:1.1'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'uk.co.chrisjenx:calligraphy:2.3.0'
@@ -64,5 +62,8 @@ dependencies {
     compile 'com.koushikdutta.ion:ion:2.+'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.0.0-RC1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+    compile 'com.google.android.gms:play-services-maps:10.2.6'
+    compile 'com.google.android.gms:play-services:11.0.4'
+    compile 'com.github.clans:fab:1.6.4'
     testCompile 'junit:junit:4.12'
 }
