@@ -1,12 +1,24 @@
 package hussain.com.projectx;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import at.markushi.ui.CircleButton;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 
 /**
@@ -17,7 +29,12 @@ import android.view.ViewGroup;
  * Use the {@link SOSFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SOSFragment extends Fragment {
+public class SOSFragment extends Fragment implements View.OnClickListener {
+
+    Button sosButton;
+    TextView sosStatusTextView;
+    Boolean isSosActivated = false;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -64,7 +81,11 @@ public class SOSFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sos, container, false);
+        View view = inflater.inflate(R.layout.fragment_sos, container, false);
+        sosStatusTextView = (TextView) view.findViewById(R.id.sos_status_text_view);
+        sosButton = (Button) view.findViewById(R.id.sos_button);
+        sosButton.setOnClickListener(this);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -89,6 +110,52 @@ public class SOSFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        if(v == sosButton){
+            if(isSosActivated) {
+                sosButton.setBackground(getResources().getDrawable(R.drawable.circle));
+                sosButton.setTextColor(getResources().getColor(R.color.black));
+                sosStatusTextView.setText("SOS Deactivated");
+
+                NotificationManager notiman = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
+                notiman.cancel(0);
+
+                isSosActivated = false;
+            }
+            else{
+                sosButton.setBackground(getResources().getDrawable(R.drawable.circle_enabled));
+                sosButton.setTextColor(getResources().getColor(R.color.white));
+                sosStatusTextView.setText("SOS Activated");
+
+                createNotification();
+
+                isSosActivated = true;
+            }
+        }
+
+    }
+
+    public void createNotification() {
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        TaskStackBuilder tsb = TaskStackBuilder.create(getContext());
+        tsb.addParentStack(MainActivity.class);
+        tsb.addNextIntent(intent);
+
+        PendingIntent pendingIntent = tsb.getPendingIntent(111, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder nBuilder = new NotificationCompat.Builder(getContext());
+        nBuilder.setContentTitle("SOS");
+        nBuilder.setContentText("SOS Running");
+        nBuilder.setSmallIcon(R.drawable.notif_ic);
+        nBuilder.setContentIntent(pendingIntent);
+        nBuilder.setOngoing(true);
+        Notification notification = nBuilder.build();
+        NotificationManager notiman = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
+        notiman.notify(0, notification);
     }
 
     /**

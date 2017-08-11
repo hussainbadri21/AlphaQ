@@ -8,6 +8,7 @@
     tools:context="hussain.com.projectx.MainActivity">
     
     <LinearLayout
+        android:id="@+id/actionbar"
         android:background="@color/main_color"
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -18,7 +19,7 @@
             android:src="@drawable/hamburger_ic"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:padding="12dp"/>
+            android:padding="16dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -26,15 +27,15 @@
             android:text="Project X"
             android:textColor="@android:color/white"
             android:textSize="22sp"
+            android:layout_marginLeft="8dp"
             android:textStyle="bold"
             android:layout_gravity="center_vertical"/>
         
     </LinearLayout>
 
-
-
     <FrameLayout
         android:id="@+id/main_framelayout"
+        android:layout_below="@id/actionbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

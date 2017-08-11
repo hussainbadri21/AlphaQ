@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     FrameLayout mainActivityFrameLayout;
     private Drawer result;
     ImageView hamburgerImageView;
-SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,6 @@ SharedPreferences sharedPreferences;
         setContentView(R.layout.activity_main);
 
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-
 
         mainActivityFrameLayout = (FrameLayout) findViewById(R.id.main_framelayout);
         hamburgerImageView = (ImageView) findViewById(R.id.hamburger_icon);
@@ -107,8 +106,6 @@ SharedPreferences sharedPreferences;
                 )
                 .withOnDrawerItemClickListener(this)
                 .build();
-
-
 
         result.closeDrawer();
         result.setSelection(1);
