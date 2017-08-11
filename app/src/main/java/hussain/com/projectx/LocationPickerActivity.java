@@ -65,14 +65,8 @@ public class LocationPickerActivity extends Activity {
         locationPickerView.addJavascriptInterface(new LocationPickerJSInterface(), "AndroidFunction");
         rad.setText(radius.toString());
         locationPickerView.loadUrl("file:///android_asset/locationPickerPage/index.html");
-        locationPickerView.setWebChromeClient(new WebChromeClient(){
 
-            @Override
-            public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
-                callback.invoke(origin, true, false);
-            }
-        });
-        /*locationPickerView.setWebChromeClient(new WebChromeClient() {
+        locationPickerView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int progress) {
                 if (progress == 100) {
@@ -80,7 +74,7 @@ public class LocationPickerActivity extends Activity {
                     locationPickerView.loadUrl("javascript:activityInitialize(" + lat+ "," +lon + "," + zoom + ")");
                 }
             }
-        });*/
+        });
         // ^^^
 
         // EVENT HANDLER FOR PERFORMING SEARCH IN WEBVIEW
