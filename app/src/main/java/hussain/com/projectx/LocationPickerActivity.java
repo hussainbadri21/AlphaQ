@@ -48,7 +48,7 @@ public class LocationPickerActivity extends Activity {
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         lon =Double.parseDouble(sharedPreferences.getString("lon",""));
         lat = Double.parseDouble(sharedPreferences.getString("lat",""));
-        Log.e("data",String.valueOf(lat)+"  "+String.valueOf(lon));
+        Log.e("dat",String.valueOf(lat)+"  "+String.valueOf(lon));
         if (savedInstanceState!=null) {
 
             zoom = savedInstanceState.getInt("zoom");
