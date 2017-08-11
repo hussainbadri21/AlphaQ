@@ -91,8 +91,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
         FragmentTransaction transaction;
         switch (position) {
-
-
+            case 2 :
+                SOSFragment sosFragment = SOSFragment.newInstance("", "");
+                transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.main_framelayout, sosFragment);
+                transaction.commit();
+                result.closeDrawer();
+                break;
         }
         return true;
     }
