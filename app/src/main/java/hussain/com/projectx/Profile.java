@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.app.Activity.RESULT_OK;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,8 +44,10 @@ public class Profile extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final int RQS_PICK_CONTACT = 1;
     HashMap<String,String> hm;
     ArrayList<String> alContacts;
+    ArrayAdapter adapter;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -87,7 +91,7 @@ SharedPreferences sharedPreferences;
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         getFavoriteContacts();
-        ArrayAdapter adapter = new ArrayAdapter<String>(view.getContext(), R.layout.listv, alContacts);
+        adapter = new ArrayAdapter<String>(view.getContext(), R.layout.listv, alContacts);
 
         ListView listView = (ListView)view.findViewById(R.id.list);
         listView.setAdapter(adapter);
@@ -106,10 +110,41 @@ SharedPreferences sharedPreferences;
         name.setText(sharedPreferences.getString("name",""));
         TextView email = (TextView) view.findViewById(R.id.mail);
         email.setText(sharedPreferences.getString("email",""));
+        Button bt = (Button) view.findViewById(R.id.add);
+       bt.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+               intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);
+               startActivityForResult(intent, 1);
+
+
+
+           }
+       });
         ImageView imageView = (ImageView) view.findViewById(R.id.img);
         Picasso.with(getContext()).load(sharedPreferences.getString("img","")).into(imageView);
         return view;
 
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == RQS_PICK_CONTACT){
+            if(resultCode == RESULT_OK){
+                Uri contactData = data.getData();
+                Cursor cursor = getContext().getContentResolver().query(contactData, null, null, null, null);
+                cursor.moveToFirst();
+
+                String number =       cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                alContacts.add(name);
+                hm.put(name,number);
+                adapter.notifyDataSetChanged();
+            }
+        }
     }
 
 
