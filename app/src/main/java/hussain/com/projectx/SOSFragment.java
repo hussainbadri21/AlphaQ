@@ -6,14 +6,19 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcel;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +29,8 @@ import android.widget.TextView;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.concurrent.Executor;
 
@@ -44,7 +51,10 @@ public class SOSFragment extends Fragment implements View.OnClickListener {
 
     Button sosButton;
     TextView sosStatusTextView;
-    Boolean isSosActivated = false;
+    Boolean isSosActivated = false;    DatabaseReference databaseReference;
+    SharedPreferences sharedPreferences;
+    String id;
+    int i=0;
     private FusedLocationProviderClient mFusedLocationClient;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -99,6 +109,9 @@ public class SOSFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sos, container, false);
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        sharedPreferences = this.getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        id=sharedPreferences.getString("id","");
         sosStatusTextView = (TextView) view.findViewById(R.id.sos_status_text_view);
         sosButton = (Button) view.findViewById(R.id.sos_button);
         sosButton.setOnClickListener(this);
@@ -122,6 +135,38 @@ public class SOSFragment extends Fragment implements View.OnClickListener {
 //                    + " must implement OnFragmentInteractionListener");
 //        }
     }
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+    public boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Asking user if explanation is needed
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+                //Prompt the user once explanation has been shown
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     @Override
     public void onDetach() {
@@ -129,6 +174,8 @@ public class SOSFragment extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
+    final Handler handler = new Handler();
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onClick(View v) {
 
@@ -137,7 +184,7 @@ public class SOSFragment extends Fragment implements View.OnClickListener {
                 sosButton.setBackground(getResources().getDrawable(R.drawable.circle));
                 sosButton.setTextColor(getResources().getColor(R.color.black));
                 sosStatusTextView.setText("SOS Deactivated");
-
+                handler.removeCallbacksAndMessages(null);
                 NotificationManager notiman = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
                 notiman.cancel(0);
 
@@ -147,22 +194,13 @@ public class SOSFragment extends Fragment implements View.OnClickListener {
                 sosButton.setBackground(getResources().getDrawable(R.drawable.circle_enabled));
                 sosButton.setTextColor(getResources().getColor(R.color.white));
                 sosStatusTextView.setText("SOS Activated");
-                final Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         //Do something after 100ms
                         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
-                        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            // TODO: Consider calling
-                            //    ActivityCompat#requestPermissions
-                            // here to request the missing permissions, and then overriding
-                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                            //                                          int[] grantResults)
-                            // to handle the case where the user grants the permission. See the documentation
-                            // for ActivityCompat#requestPermissions for more details.
-                            return;
-                        }
+                        if (checkLocationPermission())
+
                         mFusedLocationClient.getLastLocation()
                                 .addOnSuccessListener( getActivity(), new OnSuccessListener<Location>() {
                                     @Override
@@ -170,6 +208,8 @@ public class SOSFragment extends Fragment implements View.OnClickListener {
                                         // Got last known location. In some rare situations this can be null.
                                         if (location != null) {
                                             Log.e("biswa",String.valueOf(location));
+                                            databaseReference.child("tracking").child(id).child(""+i).setValue(new LatLong(String.valueOf(location.getLatitude()),String.valueOf(location.getLongitude())));
+                                            i++;
                                             // ...
                                         }
                                     }
