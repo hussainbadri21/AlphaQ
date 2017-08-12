@@ -2,6 +2,7 @@ package hussain.com.projectx;
 
 import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -52,9 +53,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hamburgerImageView = (ImageView) findViewById(R.id.hamburger_icon);
         hamburgerImageView.setOnClickListener(this);
 
-        PrimaryDrawerItem itemHome = new PrimaryDrawerItem().withIdentifier(1).withName("Home").withIcon(R.drawable.nav_home_black);
         PrimaryDrawerItem itemSos = new PrimaryDrawerItem().withIdentifier(1).withName("SOS").withIcon(R.drawable.nav_sos);
         PrimaryDrawerItem itemProfile = new PrimaryDrawerItem().withIdentifier(1).withName("Profile").withIcon(R.drawable.nav_profile);
+        PrimaryDrawerItem itemHome = new PrimaryDrawerItem().withIdentifier(1).withName("Home").withIcon(R.drawable.nav_home_black);
         PrimaryDrawerItem itemAbout = new PrimaryDrawerItem().withIdentifier(1).withName("About").withIcon(R.drawable.nav_about_us_black);
         PrimaryDrawerItem itemLogout = new PrimaryDrawerItem().withIdentifier(1).withName("Log Out").withIcon(R.drawable.nav_logout);
       //  Picasso.with(getApplicationContext()).load(sharedPreferences.getString("img","")).into(dp);
@@ -97,9 +98,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .withActivity(this)
                 .withAccountHeader(headerResult)
                 .addDrawerItems(
-                        itemHome,
                         itemSos,
                         itemProfile,
+                        itemHome,
                         new DividerDrawerItem(),
                         itemAbout,
                         itemLogout
@@ -126,21 +127,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
         FragmentTransaction transaction;
         switch (position) {
-            case 2 :
+            case 1 :
                 SOSFragment sosFragment = SOSFragment.newInstance("", "");
                 transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.main_framelayout, sosFragment);
                 transaction.commit();
                 result.closeDrawer();
                 break;
-            case 3:
+            case 2:
                 Profile pf=Profile.newInstance("","");
                 transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.main_framelayout, pf);
                 transaction.commit();
                 result.closeDrawer();
                 break;
-
+            case 3:
+                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                startActivity(intent);
+                break;
         }
         return true;
     }

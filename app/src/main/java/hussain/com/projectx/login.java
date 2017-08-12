@@ -229,7 +229,7 @@ public class login extends AppCompatActivity implements
     private void updateUI(boolean isSignedIn) {
         if (isSignedIn) {
            //Intent here
-            Intent i=new Intent(login.this,MapsActivity.class);
+            Intent i=new Intent(login.this,MainActivity.class);
             startActivity(i);
             finish();
         } else {
