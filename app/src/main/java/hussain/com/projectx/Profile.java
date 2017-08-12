@@ -21,11 +21,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -51,7 +60,10 @@ public class Profile extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private String id;
+    int i=0;int f=0;
 SharedPreferences sharedPreferences;
+    DatabaseReference databaseReference;
     private OnFragmentInteractionListener mListener;
 
     public Profile() {
@@ -89,7 +101,9 @@ SharedPreferences sharedPreferences;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        sharedPreferences = this.getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        id=sharedPreferences.getString("id","");
         getFavoriteContacts();
         adapter = new ArrayAdapter<String>(view.getContext(), R.layout.listv, alContacts);
 
@@ -105,7 +119,7 @@ SharedPreferences sharedPreferences;
                 Log.e("tatti",String.valueOf(hm.get(name)));
             }
         });
-        sharedPreferences = this.getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+
         TextView name = (TextView) view.findViewById(R.id.name);
         name.setText(sharedPreferences.getString("name",""));
         TextView email = (TextView) view.findViewById(R.id.mail);
@@ -124,6 +138,15 @@ SharedPreferences sharedPreferences;
        });
         ImageView imageView = (ImageView) view.findViewById(R.id.img);
         Picasso.with(getContext()).load(sharedPreferences.getString("img","")).into(imageView);
+        Iterator it = hm.entrySet().iterator();
+
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            databaseReference.child("users").child(id).child(""+i).setValue(new Contact(pair.getKey().toString(),pair.getValue().toString()));
+            i++;
+        }
+        i=0;
+
         return view;
 
     }
@@ -143,6 +166,9 @@ SharedPreferences sharedPreferences;
                 alContacts.add(name);
                 hm.put(name,number);
                 adapter.notifyDataSetChanged();
+                databaseReference.child("users").child(id).child(""+i).setValue(new Contact(name,number));
+                i++;
+                Log.e("Number",number);
             }
         }
     }
@@ -173,6 +199,26 @@ SharedPreferences sharedPreferences;
         String selection =ContactsContract.Contacts.STARRED + "='1'";
         ContentResolver cr = getContext().getContentResolver(); //Activity/Application android.content.Context
         Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, selection, null, null);
+       databaseReference.addValueEventListener(new ValueEventListener() {
+           @Override
+           public void onDataChange(DataSnapshot dataSnapshot) {
+               alContacts.clear();
+               Iterable<DataSnapshot> al = dataSnapshot.child("users").child(id).getChildren();
+               if(f==0)
+               for (DataSnapshot info : al) {
+                   Contact in=info.getValue(Contact.class);
+                   alContacts.add(in.getName());
+                   hm.put(in.getName(),in.getNumber());
+                   i++;
+
+               }
+           }
+
+           @Override
+           public void onCancelled(DatabaseError databaseError) {
+
+           }
+       });
         if(cursor.moveToFirst())
         {
 

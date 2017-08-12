@@ -144,6 +144,7 @@ public class login extends AppCompatActivity implements
             SharedPreferences.Editor editor = sharedpreferences.edit();
             editor.putString("name",personName);
             editor.putString("email",email);
+            editor.putString("id",acct.getId());
             editor.putString("img",personPhotoUrl);
             editor.apply();
 

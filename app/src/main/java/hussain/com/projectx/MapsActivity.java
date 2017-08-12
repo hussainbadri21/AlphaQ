@@ -106,7 +106,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             )
                                     .radius(Double.parseDouble(unsafeLocation.getRadius()))
                                     .strokeWidth(0f)
-                                    .fillColor(0x550000FF)
+                                    .fillColor(0x50ff0000)
                     );
                 }
             }

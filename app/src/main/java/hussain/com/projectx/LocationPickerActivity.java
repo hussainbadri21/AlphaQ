@@ -3,6 +3,7 @@ package hussain.com.projectx;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.FloatProperty;
 import android.util.Log;
 import android.view.View;
 import android.webkit.GeolocationPermissions;
@@ -17,7 +18,13 @@ import android.widget.Toast;
         import android.app.Activity;
         import android.app.AlertDialog;
 
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,6 +46,8 @@ public class LocationPickerActivity extends Activity {
     @BindView(R.id.rad)
     TextView rad;
     SharedPreferences sharedPreferences;
+    DatabaseReference databaseReference;
+
     @Override
     @SuppressLint("SetJavaScriptEnabled")
     public void onCreate(Bundle savedInstanceState) {
@@ -48,9 +57,14 @@ public class LocationPickerActivity extends Activity {
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         lon =Double.parseDouble(sharedPreferences.getString("lon",""));
         lat = Double.parseDouble(sharedPreferences.getString("lat",""));
+        latitude= Float.valueOf(lat.toString());
+        longitude=Float.valueOf(lon.toString());
         Log.e("dat",String.valueOf(lat)+"  "+String.valueOf(lon));
-        if (savedInstanceState!=null) {
 
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        if (savedInstanceState!=null) {
+            latitude = savedInstanceState.getFloat("latitude");
+            longitude = savedInstanceState.getFloat("longitude");
             zoom = savedInstanceState.getInt("zoom");
             locationName = savedInstanceState.getString("locationName");
 
@@ -71,7 +85,7 @@ public class LocationPickerActivity extends Activity {
             public void onProgressChanged(WebView view, int progress) {
                 if (progress == 100) {
 
-                    locationPickerView.loadUrl("javascript:activityInitialize(" + lat+ "," +lon + "," + zoom + ")");
+                    locationPickerView.loadUrl("javascript:activityInitialize(" + latitude+ "," +longitude + "," + zoom + ")");
                 }
             }
         });
@@ -115,6 +129,23 @@ public class LocationPickerActivity extends Activity {
             public void onClick(View arg0) {
                 AlertDialog alertDialog = new AlertDialog.Builder(LocationPickerActivity.this).create();
                 alertDialog.setTitle("Data");
+                final UnsafeLocation uLocation = new UnsafeLocation(""+latitude, ""+longitude, ""+radius);
+                final int[] f = {0};
+                databaseReference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if(f[0] ==0) {
+                            long count = dataSnapshot.child("unsafe").getChildrenCount();
+                            databaseReference.child("unsafe").child("" + (count + 1)).setValue(uLocation);
+                            f[0] =1;
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
                 alertDialog.setMessage("lat=" + latitude + ", lng=" + longitude + ", zoom=" + zoom + "\nloc=" + locationName);
                 alertDialog.show();
             }

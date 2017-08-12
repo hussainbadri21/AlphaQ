@@ -33,6 +33,6 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="12dp"
-        android:src="@drawable/google_plus" />
+        android:src="@drawable/common_google_signin_btn_icon_light_focused" />
 
 </RelativeLayout>
