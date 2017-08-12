@@ -8,14 +8,22 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -35,9 +43,11 @@ import java.net.URL;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, Drawer.OnDrawerItemClickListener {
+public class MainActivity extends AppCompatActivity implements
+        View.OnClickListener, Drawer.OnDrawerItemClickListener, GoogleApiClient.OnConnectionFailedListener {
 
     FrameLayout mainActivityFrameLayout;
+    GoogleApiClient mGoogleApiClient;
     private Drawer result;
     ImageView hamburgerImageView;
     SharedPreferences sharedPreferences;
@@ -53,13 +63,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hamburgerImageView = (ImageView) findViewById(R.id.hamburger_icon);
         hamburgerImageView.setOnClickListener(this);
 
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
         PrimaryDrawerItem itemSos = new PrimaryDrawerItem().withIdentifier(1).withName("SOS").withIcon(R.drawable.nav_sos);
         PrimaryDrawerItem itemProfile = new PrimaryDrawerItem().withIdentifier(1).withName("Profile").withIcon(R.drawable.nav_profile);
         PrimaryDrawerItem itemHome = new PrimaryDrawerItem().withIdentifier(1).withName("Home").withIcon(R.drawable.nav_home_black);
         PrimaryDrawerItem itemAbout = new PrimaryDrawerItem().withIdentifier(1).withName("About").withIcon(R.drawable.nav_about_us_black);
         PrimaryDrawerItem itemLogout = new PrimaryDrawerItem().withIdentifier(1).withName("Log Out").withIcon(R.drawable.nav_logout);
-      //  Picasso.with(getApplicationContext()).load(sharedPreferences.getString("img","")).into(dp);
-       // BitmapDrawable bp=(BitmapDrawable)dp.getDrawable();
+        //  Picasso.with(getApplicationContext()).load(sharedPreferences.getString("img","")).into(dp);
+        // BitmapDrawable bp=(BitmapDrawable)dp.getDrawable();
         DrawerImageLoader.init(new AbstractDrawerImageLoader() {
             @Override
             public void set(ImageView imageView, Uri uri, Drawable placeholder) {
@@ -75,12 +95,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public Drawable placeholder(Context ctx) {
                 return null;
             }
-        });        AccountHeader headerResult = new AccountHeaderBuilder()
+        });
+        AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.navbar_background)
                 .addProfiles(
-                        new ProfileDrawerItem().withName(sharedPreferences.getString("name",""))
-                                .withEmail(sharedPreferences.getString("email","")).withIcon(Uri.parse(sharedPreferences.getString("img",""))))
+                        new ProfileDrawerItem().withName(sharedPreferences.getString("name", ""))
+                                .withEmail(sharedPreferences.getString("email", "")).withIcon(Uri.parse(sharedPreferences.getString("img", ""))))
                 .withOnAccountHeaderProfileImageListener(new AccountHeader.OnAccountHeaderProfileImageListener() {
                     @Override
                     public boolean onProfileImageClick(View view, IProfile profile, boolean current) {
@@ -127,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
         FragmentTransaction transaction;
         switch (position) {
-            case 1 :
+            case 1:
                 SOSFragment sosFragment = SOSFragment.newInstance("", "");
                 transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.main_framelayout, sosFragment);
@@ -135,18 +156,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 result.closeDrawer();
                 break;
             case 2:
-                Profile pf=Profile.newInstance("","");
+                Profile pf = Profile.newInstance("", "");
                 transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.main_framelayout, pf);
                 transaction.commit();
                 result.closeDrawer();
                 break;
             case 3:
-                Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+                final Intent intent = new Intent(MainActivity.this, MapsActivity.class);
                 startActivity(intent);
+                break;
+            case 6:
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                        new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(Status status) {
+                                Intent intent1 = new Intent(MainActivity.this, login.class);
+                                startActivity(intent1);
+                            }
+                        });
                 break;
         }
         return true;
     }
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d("tag", "onConnectionFailed:" + connectionResult);
+    }
 }

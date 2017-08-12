@@ -9,7 +9,7 @@
     
     <LinearLayout
         android:id="@+id/actionbar"
-        android:background="@color/main_color"
+        android:background="@color/primary"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="56dp">

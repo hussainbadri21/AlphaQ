@@ -18,9 +18,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|bottom"
-                android:layout_marginLeft="16dp"
-                android:layout_marginStart="16dp"
-                fab:fab_addButtonColorNormal="@color/md_blue_A100"
+                android:layout_margin="16dp"
+                fab:fab_addButtonColorNormal="@color/material_red"
                 fab:fab_addButtonSize="normal"
                 fab:fab_labelsPosition="left">
 
@@ -28,7 +27,7 @@
                     android:id="@+id/placeholder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    fab:fab_colorNormal="@color/md_blue_A100"
+                    fab:fab_colorNormal="@color/material_red"
                     fab:fab_icon="@drawable/placeholder"
                     fab:fab_size="mini"
                     fab:fab_title="Label on the right" />
@@ -37,7 +36,7 @@
                     android:id="@+id/users"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    fab:fab_colorNormal="@color/md_blue_A100"
+                    fab:fab_colorNormal="@color/material_red"
                     fab:fab_icon="@drawable/users"
                     fab:fab_size="mini"
                     fab:fab_title="Another one on the right" />
