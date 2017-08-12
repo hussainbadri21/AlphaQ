@@ -28,8 +28,8 @@ public class HelpActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     DatabaseReference databaseReference;
-    ArrayList<LatLong> trackingLocationsList = new ArrayList<>();
 
+    ArrayList<LatLong> trackingLocationsList = new ArrayList<>();
     String id;
 
 

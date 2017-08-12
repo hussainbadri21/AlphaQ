@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -30,10 +31,18 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.concurrent.Executor;
 
 import at.markushi.ui.CircleButton;
@@ -59,6 +68,8 @@ public class SOSFragment extends Fragment implements View.OnClickListener {
     SharedPreferences sharedPreferences;
     String id;
     int i=0;
+    ArrayList<Contact> contact = new ArrayList<>();
+
     private FusedLocationProviderClient mFusedLocationClient;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -118,6 +129,27 @@ public class SOSFragment extends Fragment implements View.OnClickListener {
         id=sharedPreferences.getString("id","");
         sosStatusTextView = (TextView) view.findViewById(R.id.sos_status_text_view);
         sosButton = (Button) view.findViewById(R.id.sos_button);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                contact.clear();
+                Iterable<DataSnapshot> tracks = dataSnapshot.child("users").child(id).getChildren();
+                for (DataSnapshot info : tracks) {
+                    Contact latLong = info.getValue(Contact.class);
+                    contact.add(latLong);
+                }
+                int i=0;
+
+
+            }
+
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         sosButton.setOnClickListener(this);
         return view;
     }
@@ -224,10 +256,13 @@ public class SOSFragment extends Fragment implements View.OnClickListener {
                 intent.putExtra("sms_body", "https://narayanasuri08.000webhostapp.com?id=" + id);
                 startActivity(intent);*/
                 try {
-                    SmsManager smsManager = SmsManager.getDefault();
-                    smsManager.sendTextMessage("+919087860604", null, "https://narayanasuri08.000webhostapp.com/map?id=" + id, null, null);
-                    Toast.makeText(getApplicationContext(), "Message Sent",
-                            Toast.LENGTH_LONG).show();
+                    for(Contact value : contact){
+                        SmsManager smsManager = SmsManager.getDefault();
+                        smsManager.sendTextMessage(value.getNumber(), null, "https://narayanasuri08.000webhostapp.com/map?id=" + id, null, null);
+                        Toast.makeText(getApplicationContext(), "Message Sent",
+                                Toast.LENGTH_LONG).show();
+                    }
+
                 } catch (Exception ex) {
 
 
