@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "hussain.com.projectx",
+    "sha256_cert_fingerprints":
+    ["BD:D0:9A:68:69:3F:65:94:4C:7D:88:FD:E1:66:50:37:7E:CC:02:30:88:F8:31:6E:61:E7:D5:38:5B:E6:D8:B9"]
+  }
+}]
