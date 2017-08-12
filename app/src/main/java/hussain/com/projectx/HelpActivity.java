@@ -1,6 +1,7 @@
 package hussain.com.projectx;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,6 +30,8 @@ public class HelpActivity extends FragmentActivity implements OnMapReadyCallback
     DatabaseReference databaseReference;
     ArrayList<LatLong> trackingLocationsList = new ArrayList<>();
 
+    String id;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,29 +44,12 @@ public class HelpActivity extends FragmentActivity implements OnMapReadyCallback
         // ATTENTION: This was auto-generated to handle app links.
 
         databaseReference = FirebaseDatabase.getInstance().getReference("tracking");
-
+        // ATTENTION: This was auto-generated to handle app links.
         Intent appLinkIntent = getIntent();
         String appLinkAction = appLinkIntent.getAction();
         Uri appLinkData = appLinkIntent.getData();
+        id=appLinkData.getQueryParameter("id");
 
-        final String id = appLinkData.getQueryParameter("id");
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                trackingLocationsList.clear();
-                Iterable<DataSnapshot> tracks = dataSnapshot.child("tracking").child(id).getChildren();
-                for (DataSnapshot info : tracks) {
-                    LatLong latLong = info.getValue(LatLong.class);
-                    trackingLocationsList.add(latLong);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
     }
 
@@ -78,10 +66,44 @@ public class HelpActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                trackingLocationsList.clear();
+                Iterable<DataSnapshot> tracks = dataSnapshot.child(id).getChildren();
+                for (DataSnapshot info : tracks) {
+                    LatLong latLong = info.getValue(LatLong.class);
+                    trackingLocationsList.add(latLong);
+                }
+                int i=0;
+                LatLng previous,next = null;
+                for(LatLong value : trackingLocationsList){
+                    if(i==0){
+                        previous = new LatLng(Double.parseDouble(value.getLatitude()), Double.parseDouble(value.getLongitude()));
+                        next = new LatLng(Double.parseDouble(value.getLatitude()), Double.parseDouble(value.getLongitude()));
+                        mMap.addMarker(new MarkerOptions().position(previous).title("Marker"+i++));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(previous));
+                    }
+                    else{
+                        previous=next;
+                        next = new LatLng(Double.parseDouble(value.getLatitude()), Double.parseDouble(value.getLongitude()));
+                        mMap.addMarker(new MarkerOptions().position(next).title("Marker"+i++));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(next));
+                    }
+                    mMap.addPolyline(new PolylineOptions()
+                            .add(previous,next)
+                            .width(5)
+                            .color(Color.RED));
+                }
+            }
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 }
