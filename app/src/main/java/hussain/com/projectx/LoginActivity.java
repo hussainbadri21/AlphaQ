@@ -61,7 +61,7 @@ import org.json.JSONObject;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class login extends AppCompatActivity implements
+public class LoginActivity extends AppCompatActivity implements
 
         GoogleApiClient.OnConnectionFailedListener {
 
@@ -234,7 +234,7 @@ public class login extends AppCompatActivity implements
     private void updateUI(boolean isSignedIn) {
         if (isSignedIn) {
            //Intent here
-            Intent i=new Intent(login.this,MainActivity.class);
+            Intent i=new Intent(LoginActivity.this,MainActivity.class);
             startActivity(i);
             finish();
         } else {

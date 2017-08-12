@@ -1,11 +1,8 @@
 package hussain.com.projectx;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -17,7 +14,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -36,12 +32,6 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.util.AbstractDrawerImageLoader;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
-import java.net.URL;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements
         View.OnClickListener, Drawer.OnDrawerItemClickListener, GoogleApiClient.OnConnectionFailedListener {
@@ -74,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements
                 .build();
 
         PrimaryDrawerItem itemSos = new PrimaryDrawerItem().withIdentifier(1).withName("SOS").withIcon(R.drawable.nav_sos);
-        PrimaryDrawerItem itemProfile = new PrimaryDrawerItem().withIdentifier(1).withName("Profile").withIcon(R.drawable.nav_profile);
+        PrimaryDrawerItem itemProfile = new PrimaryDrawerItem().withIdentifier(1).withName("ProfileFragment").withIcon(R.drawable.nav_profile);
         PrimaryDrawerItem itemHome = new PrimaryDrawerItem().withIdentifier(1).withName("Home").withIcon(R.drawable.nav_home_black);
         PrimaryDrawerItem itemAbout = new PrimaryDrawerItem().withIdentifier(1).withName("About").withIcon(R.drawable.nav_about_us_black);
         PrimaryDrawerItem itemLogout = new PrimaryDrawerItem().withIdentifier(1).withName("Log Out").withIcon(R.drawable.nav_logout);
@@ -105,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements
                 .withOnAccountHeaderProfileImageListener(new AccountHeader.OnAccountHeaderProfileImageListener() {
                     @Override
                     public boolean onProfileImageClick(View view, IProfile profile, boolean current) {
-                        //Launch Profile Activity
+                        //Launch ProfileFragment Activity
                         return false;
                     }
 
@@ -156,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements
                 result.closeDrawer();
                 break;
             case 2:
-                Profile pf = Profile.newInstance("", "");
+                ProfileFragment pf = ProfileFragment.newInstance("", "");
                 transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.main_framelayout, pf);
                 transaction.commit();
@@ -171,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements
                         new ResultCallback<Status>() {
                             @Override
                             public void onResult(Status status) {
-                                Intent intent1 = new Intent(MainActivity.this, login.class);
+                                Intent intent1 = new Intent(MainActivity.this, LoginActivity.class);
                                 startActivity(intent1);
                             }
                         });
