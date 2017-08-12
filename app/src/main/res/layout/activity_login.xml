@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="250dp"
-        android:text="AlphaQ"
+        android:text="Guardian Angel"
         android:textAlignment="center"
 
         android:textColor="@android:color/white"
@@ -33,6 +33,6 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="12dp"
-        android:src="@drawable/common_google_signin_btn_icon_light_focused" />
+        android:src="@drawable/google_plus" />
 
 </RelativeLayout>

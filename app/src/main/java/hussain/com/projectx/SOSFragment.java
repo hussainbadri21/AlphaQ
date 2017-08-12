@@ -19,12 +19,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -37,6 +39,7 @@ import java.util.concurrent.Executor;
 import at.markushi.ui.CircleButton;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 /**
@@ -49,6 +52,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
  */
 public class SOSFragment extends Fragment implements View.OnClickListener {
 
+    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0 ;
     Button sosButton;
     TextView sosStatusTextView;
     Boolean isSosActivated = false;    DatabaseReference databaseReference;
@@ -179,8 +183,8 @@ public class SOSFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        if(v == sosButton){
-            if(isSosActivated) {
+        if (v == sosButton) {
+            if (isSosActivated) {
                 sosButton.setBackground(getResources().getDrawable(R.drawable.circle));
                 sosButton.setTextColor(getResources().getColor(R.color.black));
                 sosStatusTextView.setText("SOS Deactivated");
@@ -189,8 +193,7 @@ public class SOSFragment extends Fragment implements View.OnClickListener {
                 notiman.cancel(0);
 
                 isSosActivated = false;
-            }
-            else{
+            } else {
                 sosButton.setBackground(getResources().getDrawable(R.drawable.circle_enabled));
                 sosButton.setTextColor(getResources().getColor(R.color.white));
                 sosStatusTextView.setText("SOS Activated");
@@ -201,23 +204,35 @@ public class SOSFragment extends Fragment implements View.OnClickListener {
                         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
                         if (checkLocationPermission())
 
-                        mFusedLocationClient.getLastLocation()
-                                .addOnSuccessListener( getActivity(), new OnSuccessListener<Location>() {
-                                    @Override
-                                    public void onSuccess(Location location) {
-                                        // Got last known location. In some rare situations this can be null.
-                                        if (location != null) {
-                                            Log.e("biswa",String.valueOf(location));
-                                            databaseReference.child("tracking").child(id).child(""+i).setValue(new LatLong(String.valueOf(location.getLatitude()),String.valueOf(location.getLongitude())));
-                                            i++;
-                                            // ...
+                            mFusedLocationClient.getLastLocation()
+                                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                                        @Override
+                                        public void onSuccess(Location location) {
+                                            // Got last known location. In some rare situations this can be null.
+                                            if (location != null) {
+                                                Log.e("biswa", String.valueOf(location));
+                                                databaseReference.child("tracking").child(id).child("" + i).setValue(new LatLong(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude())));
+                                                i++;
+                                                // ...
+                                            }
                                         }
-                                    }
-                                });
+                                    });
                         handler.postDelayed(this, 30000);
                     }
                 }, 1500);
+                /*Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:" + "+919087860604"));
+                intent.putExtra("sms_body", "https://narayanasuri08.000webhostapp.com?id=" + id);
+                startActivity(intent);*/
+                try {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage("+919087860604", null, "https://narayanasuri08.000webhostapp.com/map?id=" + id, null, null);
+                    Toast.makeText(getApplicationContext(), "Message Sent",
+                            Toast.LENGTH_LONG).show();
+                } catch (Exception ex) {
 
+
+                    ex.printStackTrace();
+                }
                 createNotification();
 
                 isSosActivated = true;
@@ -225,6 +240,8 @@ public class SOSFragment extends Fragment implements View.OnClickListener {
         }
 
     }
+
+
 
     public void createNotification() {
         Intent intent = new Intent(getContext(), MainActivity.class);
